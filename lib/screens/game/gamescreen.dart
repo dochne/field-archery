@@ -11,20 +11,21 @@ class GameScreen extends StatelessWidget {
           Expanded(
               child: ListView.builder(
             // Let the ListView know how many items it needs to build.
-            itemCount: activePlayers.items.length,
+            itemCount: 0, // activePlayers.items.length,
             // Provide a builder function. This is where the magic happens.
             // Convert each item into a widget based on the type of item it is.
             itemBuilder: (context, index) {
-              final player = activePlayers.items[index];
+              // final player = activePlayers.items[index];
 
               return ListTile(
-                  title: Text(player.name),
+                  title: Text("hi"),
                   enabled: true,
                   trailing: IconButton(
                       icon: Icon(Icons.delete),
                       onPressed: () {
-                        activePlayers.remove(player);
-                      }));
+                        //activePlayers.remove(player);
+                      })
+              );
             },
           ))
         ]),

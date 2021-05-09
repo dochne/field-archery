@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:archery/models/player.dart';
 import 'package:flutter/material.dart';
 
+// Deprecated yo
 class ActivePlayersModel extends ChangeNotifier {
   /// Internal, private state of the cart.
   final List<Player> _players = [];

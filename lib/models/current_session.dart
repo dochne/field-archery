@@ -1,37 +1,32 @@
 import 'dart:collection';
 
+import 'package:archery/models/bow_type.dart';
+import 'package:archery/models/shot.dart';
 import 'package:archery/models/player.dart';
+import 'package:archery/models/session.dart';
+import 'package:archery/models/target.dart';
 import 'package:flutter/material.dart';
 
-class ActivePlayersModel extends ChangeNotifier {
-  /// Internal, private state of the cart.
-  final List<Player> _players = [];
+class CurrentSession extends ChangeNotifier {
+  Session? session;
+  int currentTarget = 1;
 
-  /// An unmodifiable view of the items in the cart.
-  UnmodifiableListView<Player> get items => UnmodifiableListView(_players);
+  // Todo: work out how to deal with targets - it'd be cool if we could say
+  // "owl", "wolf" etc
 
-  /// The current total price of all items (assuming all items cost $42).
-  int get totalPlayers => _players.length * 42;
+  UnmodifiableListView<Player> get players => UnmodifiableListView(this.session!.players);
 
-  /// Adds [item] to cart. This and [removeAll] are the only ways to modify the
-  /// cart from the outside.
-  void add(Player player) {
-    _players.add(player);
+  void start(Session session) {
+    this.session = session;
+  }
+
+  void shoot(Player player, Target target, int score) {
+    var shot = Shot.create(player, session!.getCurrentBow(player), target, score);
+    session!.addShot(shot);
     notifyListeners();
   }
 
-  void remove(Player player) {
-    var index = _players.indexOf(player);
-
-    if (index != -1) {
-      _players.removeAt(index);
-      notifyListeners();
-    }
-  }
-
-  /// Removes all items from the cart.
-  void removeAll() {
-    _players.clear();
-    notifyListeners();
+  void addPlayer(Player player, BowType bowType) {
+    session!.addPlayer(player, bowType);
   }
 }

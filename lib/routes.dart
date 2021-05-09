@@ -1,4 +1,4 @@
-import 'package:archery/screens/detail/gamescreen.dart';
+import 'package:archery/screens/game/gamescreen.dart';
 import 'package:archery/screens/homepage/homepagescreen.dart';
 import 'package:flutter/widgets.dart';
 
