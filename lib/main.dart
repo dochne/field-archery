@@ -1,4 +1,5 @@
 import 'package:archery/models/active_players.dart';
+import 'package:archery/state/current_session.dart';
 import 'package:archery/theme/style.dart';
 import 'package:flutter/material.dart';
 import 'package:archery/routes.dart';
@@ -8,7 +9,8 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => ActivePlayersModel())
+        ChangeNotifierProvider(create: (context) => ActivePlayersModel()),
+        ChangeNotifierProvider(create: (context) => CurrentSession()),
       ],
       child: MyApp()
     )

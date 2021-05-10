@@ -2,6 +2,7 @@ import 'package:archery/models/active_players.dart';
 import 'package:archery/models/bow_type.dart';
 import 'package:archery/models/player.dart';
 import 'package:archery/models/session.dart';
+import 'package:archery/state/current_session.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
     new Player(name: "Dave"),
     new Player(name: "Doug"),
     new Player(name: "Em"),
+    new Player(name: "Marina"),
     new Player(name: "Sam"),
   ];
 
@@ -61,15 +63,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               )
           ),
-          ElevatedButton(
-            child: Text("Start Game!"),
-            onPressed: () {
-              Navigator.pushNamed(
-                context,
-                '/game',
-              );
-            },
-          )
+          Consumer<CurrentSession>(builder: (context, currentSession, child) {
+            return ElevatedButton(
+              child: Text("Start Game!"),
+              onPressed: () {
+                currentSession.start(_session);
+                Navigator.pushNamed(
+                  context,
+                  '/game',
+                );
+              }
+            );
+          })
         ]),
         // ),
         floatingActionButton: FloatingActionButton(
@@ -85,30 +90,32 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _addPlayers(BuildContext context) async {
     List<SimpleDialogOption> list = [];
 
-    List<String> _friends = ["Doug", "Steve", "Ben"];
+    //List<String> _friends = ["Doug", "Steve", "Ben"];
 
-    for (var i = 0; i < _friends.length; i++) {
-      String name = _friends[i];
+    //for (var i = 0; i < _friends.length; i++) {
+    _players.forEach((player) {
+      // String name = _players[i];
 
       list.add(SimpleDialogOption(
           onPressed: () {
-            Navigator.pop(context, name);
+            Navigator.pop(context, player);
           },
           child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0),
-              child: Text(name))));
-    }
+              child: Text(player.name))));
+    });
 
-    String? value = await showDialog<String>(
+
+    Player? player = await showDialog<Player>(
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(title: const Text('Add Player'), children: list);
         }
     );
 
-    if (value != null) {
+    if (player != null) {
       setState(() {
-        _session.addPlayer(new Player(name: value), new BowType(bowType: "compound"));
+        _session.addPlayer(player/*, new BowType(bowType: "compound")*/);
       });
       //   activePlayers.add(new Player(name: value));
     }

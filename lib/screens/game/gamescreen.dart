@@ -1,35 +1,36 @@
+import 'package:archery/screens/game/components/players.dart';
+import 'package:archery/state/current_session.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class GameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: Column(children: [
-          Text("HellO"),
-          Expanded(
-              child: ListView.builder(
-            // Let the ListView know how many items it needs to build.
-            itemCount: 0, // activePlayers.items.length,
-            // Provide a builder function. This is where the magic happens.
-            // Convert each item into a widget based on the type of item it is.
-            itemBuilder: (context, index) {
-              // final player = activePlayers.items[index];
+    return Consumer<CurrentSession>(builder: (context, currentSession, child) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text("Target " + currentSession.currentTarget!.toString()),
+        ),
+        body: Center(
+          child: Column(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+              // Text("Hello"),
+                  Players(currentSession),
+                ]
+              ),
+              ElevatedButton(
+                child: Text("Next Target"),
+                onPressed: () {
+                  currentSession.nextTarget();
+                },
+              )
 
-              return ListTile(
-                  title: Text("hi"),
-                  enabled: true,
-                  trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        //activePlayers.remove(player);
-                      })
-              );
-            },
-          ))
-        ]),
-      ),
+          ]),
+        ),
     );
+  });
   }
 }
