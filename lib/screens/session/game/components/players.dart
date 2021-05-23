@@ -1,26 +1,30 @@
 import 'package:archery/models/player.dart';
+import 'package:archery/state/active_session.dart';
 import 'package:archery/state/current_session.dart';
 import 'package:flutter/material.dart';
 
 class Players extends StatelessWidget {
-  CurrentSession currentSession;
+  ActiveSession activeSession;
+  int target;
 
-  Players(this.currentSession);
+  Players(this.activeSession, this.target);
 
   @override
   Widget build(BuildContext context) {
+
+
     List<DataRow> rows = [];
-    for (Player player in this.currentSession.players) {
-      int? score = this.currentSession.getScore(player);
+    for (Player player in this.activeSession.players) {
+      int? score = this.activeSession.getScore(player, this.target);
 
       rows.add(
           DataRow(
             cells: [
               DataCell(Text(player.name)),
-              DataCell(Text(this.currentSession.getTotalScore(player).toString())),
+              DataCell(Text(this.activeSession.getTotalScore(player).toString())),
               DataCell(Text(score == null ? '-' : score.toString()), showEditIcon: true, onTap: () async {
                 int? score = await getScore(context);
-                this.currentSession.shoot(player, score);
+                this.activeSession.shoot(player, target, score);
                 // this.currentSession.setScoreForPlayer(player, score);
               }),
             ]
@@ -58,12 +62,12 @@ class Players extends StatelessWidget {
 
     Map<int?, String> shotTypes = {
       24: "24 - Inner kill",
-      20: "20 - First shot kill",
-      16: "16 - First shot wound",
-      14: "14 - Second shot kill",
-      10: "10 - Second shot wound",
-      8: "8 - Third shot kill",
-      4: "4 - Third shot wound",
+      20: "20 - First kill",
+      16: "16 - First wound",
+      14: "14 - Second kill",
+      10: "10 - Second wound",
+      8: "8 - Third kill",
+      4: "4 - Third wound",
       0: "0 - Miss",
       null: "Did not shoot"
     };
@@ -83,7 +87,7 @@ class Players extends StatelessWidget {
     return await showDialog<int?>(
         context: context,
         builder: (BuildContext context) {
-          return SimpleDialog(title: const Text('Add Player'), children: list);
+          return SimpleDialog(children: list);
         }
     );
   }

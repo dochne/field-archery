@@ -2,24 +2,27 @@ import 'package:archery/models/active_players.dart';
 import 'package:archery/models/bow_type.dart';
 import 'package:archery/models/player.dart';
 import 'package:archery/models/session.dart';
+import 'package:archery/state/active_session.dart';
 import 'package:archery/state/current_session.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatefulWidget {
+class AddPlayerScreen extends StatefulWidget {
+  final String sessionId;
+  const AddPlayerScreen({Key? key, required this.sessionId}) : super(key: key);
+  final String title = "Add Players";
+
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _AddPlayerScreenState createState() => _AddPlayerScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  var _session = new Session();
-
-  // final activePlayers = ActivePlayersCubit();
+class _AddPlayerScreenState extends State<AddPlayerScreen> {
   final List<Player> _players = [
     new Player(name: "Ben"),
     new Player(name: "Dave"),
     new Player(name: "Doug"),
     new Player(name: "Em"),
+    new Player(name: "Goughy"),
     new Player(name: "Marina"),
     new Player(name: "Sam"),
   ];
@@ -32,22 +35,22 @@ class _HomeScreenState extends State<HomeScreen> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Consumer<ActivePlayersModel>(builder: (context, activePlayers, child) {
+    return Consumer<ActiveSession>(builder: (context, activeSession, child) {
       return Scaffold(
-        appBar: AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          title: Text("Select your players"),
-        ),
+        // appBar: AppBar(
+        //   // Here we take the value from the MyHomePage object that was created by
+        //   // the App.build method, and use it to set our appbar title.
+        //   title: Text("Select your players"),
+        // ),
         body: Column(children: [
           Expanded(
               child: ListView.builder(
                 // Let the ListView know how many items it needs to build.
-                itemCount: _session.players.length,
+                itemCount: activeSession.players.length,
                 // Provide a builder function. This is where the magic happens.
                 // Convert each item into a widget based on the type of item it is.
                 itemBuilder: (context, index) {
-                  final player = _session.players[index];
+                  final player = activeSession.players[index];
 
                   return ListTile(
                       title: Text(player.name),
@@ -56,29 +59,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           icon: Icon(Icons.delete),
                           onPressed: () {
                             setState(() {
-                              _session.removePlayer(player);
+                              activeSession.removePlayer(player);
                             });
                           })
                   );
                 },
               )
-          ),
-          Consumer<CurrentSession>(builder: (context, currentSession, child) {
-            return ElevatedButton(
-              child: Text("Start Game!"),
-              onPressed: () {
-                currentSession.start(_session);
-                Navigator.pushNamed(
-                  context,
-                  '/game',
-                );
-              }
-            );
-          })
+          )
         ]),
-        // ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () { _addPlayers(context);},
+          onPressed: () { _addPlayers(context, activeSession); },
           tooltip: 'Add Player',
           child: Icon(Icons.add),
         ), // This trailing comma makes auto-formatting nicer for build methods.
@@ -87,13 +77,19 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 
-  Future<void> _addPlayers(BuildContext context) async {
+  Future<void> _addPlayers(BuildContext context, ActiveSession activeSession) async {
     List<SimpleDialogOption> list = [];
 
     //List<String> _friends = ["Doug", "Steve", "Ben"];
+    List<Player> _notPlaying = [];
+    _players.forEach((player) {
+      if (!activeSession.hasPlayer(player)) {
+        _notPlaying.add(player);
+      }
+    });
 
     //for (var i = 0; i < _friends.length; i++) {
-    _players.forEach((player) {
+    _notPlaying.forEach((Player player) {
       // String name = _players[i];
 
       list.add(SimpleDialogOption(
@@ -115,32 +111,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (player != null) {
       setState(() {
-        _session.addPlayer(player/*, new BowType(bowType: "compound")*/);
+        activeSession.addPlayer(player/*, new BowType(bowType: "compound")*/);
       });
       //   activePlayers.add(new Player(name: value));
     }
   }
 }
 
-// int _counter = 0;
-// bool _checkbox = false;
-// List<String> _players = [];
-//
-// static List<String> _friends = [
-//   "Ben",
-//   "Dave",
-//   "Doug",
-//   "Em",
-//   "Sam"
-// ];
-//
-
-//
-// if (value != null) {
-//   setState(() {
-//     _players.add(value);
-//     _players.sort((a, b) {
-//       return a.toLowerCase().compareTo(b.toLowerCase());
-//     });
-//   });
-// }

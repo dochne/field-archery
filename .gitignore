@@ -44,3 +44,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# If we make this repo shared, let's not make this available
+
+/android/key.properties
