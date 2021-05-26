@@ -48,3 +48,4 @@ app.*.map.json
 # If we make this repo shared, let's not make this available
 
 /android/key.properties
+/ignore

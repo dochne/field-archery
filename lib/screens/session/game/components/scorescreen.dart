@@ -1,13 +1,12 @@
 import 'package:archery/models/player.dart';
 import 'package:archery/state/active_session.dart';
-import 'package:archery/state/current_session.dart';
 import 'package:flutter/material.dart';
 
-class Players extends StatelessWidget {
+class ScoreScreen extends StatelessWidget {
   ActiveSession activeSession;
   int target;
 
-  Players(this.activeSession, this.target);
+  ScoreScreen(this.activeSession, this.target);
 
   @override
   Widget build(BuildContext context) {

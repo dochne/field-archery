@@ -1,21 +1,23 @@
 import 'package:archery/models/active_players.dart';
 import 'package:archery/state/active_session.dart';
-import 'package:archery/state/current_session.dart';
 import 'package:archery/theme/style.dart';
 import 'package:flutter/material.dart';
 import 'package:archery/routes.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  // runApp(
+  //   MultiProvider(
+  //     providers: [
+  //       ChangeNotifierProvider(create: (context) => ActivePlayersModel()),
+  //       ChangeNotifierProvider(create: (context) => ActiveSession()),
+  //     ],
+  //     child: MyApp()
+  //   )
+  // );
+
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => ActivePlayersModel()),
-        ChangeNotifierProvider(create: (context) => CurrentSession()),
-        ChangeNotifierProvider(create: (context) => ActiveSession()),
-      ],
-      child: MyApp()
-    )
+      MyApp()
   );
 }
 

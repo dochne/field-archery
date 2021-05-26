@@ -1,6 +1,7 @@
 
 class BowType {
+  final String id;
   final String bowType;
 
-  BowType({required this.bowType});
+  BowType(this.id, this.bowType);
 }

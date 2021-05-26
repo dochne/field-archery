@@ -1,15 +1,16 @@
 import 'package:archery/models/active_players.dart';
 import 'package:archery/models/bow_type.dart';
 import 'package:archery/models/player.dart';
+import 'package:archery/store/players.dart';
 import 'package:archery/models/session.dart';
+import 'package:archery/screens/session/game/components/scorescreen.dart';
 import 'package:archery/state/active_session.dart';
-import 'package:archery/state/current_session.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class PlayerScreen extends StatefulWidget {
-  final String sessionId;
-  const PlayerScreen({Key? key, required this.sessionId}) : super(key: key);
+  // final String sessionId;
+  // const PlayerScreen({Key? key, required this.sessionId}) : super(key: key);
   final String title = "Add Players";
 
   @override
@@ -17,16 +18,6 @@ class PlayerScreen extends StatefulWidget {
 }
 
 class _PlayerScreenState extends State<PlayerScreen> {
-  final List<Player> _players = [
-    new Player(name: "Ben"),
-    new Player(name: "Dave"),
-    new Player(name: "Doug"),
-    new Player(name: "Em"),
-    new Player(name: "Goughy"),
-    new Player(name: "Marina"),
-    new Player(name: "Sam"),
-  ];
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -36,6 +27,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Consumer<ActiveSession>(builder: (context, activeSession, child) {
+
       return Scaffold(
         // appBar: AppBar(
         //   // Here we take the value from the MyHomePage object that was created by
@@ -79,6 +71,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
   Future<void> _addPlayers(BuildContext context, ActiveSession activeSession) async {
     List<SimpleDialogOption> list = [];
+
+    var _foo = await Players.create();
+    var _players = _foo.all();
+
+
+
 
     //List<String> _friends = ["Doug", "Steve", "Ben"];
     List<Player> _notPlaying = [];

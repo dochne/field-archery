@@ -1,13 +1,66 @@
+import 'dart:convert';
+
 import 'package:archery/models/bow_type.dart';
 import 'package:archery/models/player.dart';
 import 'package:archery/models/shot.dart';
 import 'package:archery/models/target.dart';
+import 'package:archery/store/sessions.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:uuid/uuid.dart';
 
 class Session {
-  final DateTime? _startTime = null;
+  final Sessions sessions;
+  final String uuid;
+  final DateTime startTime;
   final List<Player> players = [];
-  // final List<Shot> _shots = [];
   final Map<Player, Map<int, Shot>> _shots = {};
+  final Map<Player, BowType> playerBowType = {};
+
+  @override
+  Session._(this.sessions, this.uuid, this.startTime);
+
+  static Session fromString(Sessions sessions, String string) {
+    var data = jsonDecode(string);
+    var session = Session._(sessions, data['uuid'], DateTime.fromMillisecondsSinceEpoch(data['startTime']));
+
+    data['players'].forEach((json) {
+      session.players.add(Player.fromJson(string));
+    });
+
+    return session;
+  }
+
+  static Session createNew(Sessions sessions) {
+    return Session._(sessions, Uuid().v4(), new DateTime.now());
+  }
+
+  save() {
+    this.sessions.save(this);
+  }
+
+  toString() {
+    List<String> players = [];
+    this.players.forEach((Player player) {
+      players.add(player.toJson());
+    });
+
+    List<String> shots = [];
+    this._shots.forEach((player, map) {
+      map.forEach((_, shot) {
+        shots.add(shot.toString());
+      });
+    });
+
+    return jsonEncode({
+      "uuid": this.uuid,
+      "startTime": this.startTime.millisecondsSinceEpoch,
+      "players": players,
+      "shots": shots
+    });
+  }
+
+
+  // final List<Shot> _shots = [];
   // final Map<Target, List<Shot>> _targetShots = {};
 
   // BowType getCurrentBow(Player player) {
@@ -37,54 +90,44 @@ class Session {
 
   void addPlayer(Player player) {
     this.players.add(player);
-    // this._currentBow[player] = bowType;
+    this.playerBowType[player] = new BowType("compound_ul", "Compound Unlimited");
+    this.players.sort((player1, player2) => player1.name.compareTo(player2.name));
   }
 
   void removePlayer(Player player) {
-    this.players.remove(player);
-    // this._currentBow.remove(player);
+    // Todo: work out wtf should actually happen here
+    // Like, what's best practice here?
+    // player.active
   }
 
-  void removeShot(Player player, int target) {
-    if (_shots[player] != null && _shots[player]![target] != null) {
-      _shots[player]!.remove(target);
-    }
-  }
+  void setScore(Player player, int target, int? score) {
 
-  void addShot(Shot shot) {
-
-    // final Map<Player, Map<int, Shot>> _shots = {};
-
-    if (_shots[shot.player] == null) {
-      _shots[shot.player] = new Map();
+    if (score == null) {
+      if (_shots[player] != null) {
+        _shots[player]!.remove(target);
+      }
+      this.sessions.save(this);
+      return;
     }
 
-    this._shots.update(shot.player, (Map<int, Shot> playerShots) {
-      playerShots[shot.target] = shot;
+    if (_shots[player] == null) {
+      _shots[player] = new Map();
+    }
+
+    debugPrint(this.playerBowType.toString());
+    this.playerBowType[player] = BowType("compound_ul", "Compound Unlimited");
+    var shot = Shot.create(this.playerBowType[player]!, score);
+
+    this._shots.update(player, (Map<int, Shot> playerShots) {
+      playerShots[target] = shot;
       return playerShots;
     }, ifAbsent: () {
       Map<int, Shot> map = Map();
-      map[shot.target] = shot;
+      map[target] = shot;
       return map;
     });
 
-    _shots[shot.player]![shot.target] = shot;
-
-    // // this._shots[shot.player]
-    // this._shots.add(shot);
-    //
-    // this._shots.update(shot.player, (value) {
-    //   value.add(shot);
-    //   return value;
-    // }, ifAbsent: () => [shot]);
-    //
-    // this._targetShots.update(shot.target, (value) {
-    //   value.add(shot);
-    //   return value;
-    // }, ifAbsent: () => [shot]);
+    _shots[player]![target] = shot;
+    this.sessions.save(this);
   }
-  //
-  // void changeBow(Player player, BowType bowType) {
-  //   this._currentBow[player] = bowType;
-  // }
 }

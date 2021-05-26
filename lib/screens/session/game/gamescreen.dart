@@ -1,14 +1,13 @@
-import 'package:archery/screens/session/game/components/players.dart';
+import 'package:archery/screens/session/game/components/scorescreen.dart';
 import 'package:archery/state/active_session.dart';
-import 'package:archery/state/current_session.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class GameScreen extends StatefulWidget {
-  final String sessionId;
+  // final String sessionId;
   final String title = "Scoring";
 
-  const GameScreen({Key? key, required this.sessionId}) : super(key: key);
+  // const GameScreen({Key? key, required this.sessionId}) : super(key: key);
 
   @override
   _GameScreenState createState() => _GameScreenState();
@@ -88,7 +87,7 @@ Widget buildPage(context, activeSession, int currentTarget) {
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: Text("Target " + currentTarget.toString(), textAlign: TextAlign.center, textScaleFactor: 2,),
               ),
-              Players(activeSession, currentTarget),
+              ScoreScreen(activeSession, currentTarget),
             ])
   ]));
 }

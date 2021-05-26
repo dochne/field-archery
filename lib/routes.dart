@@ -1,5 +1,5 @@
 import 'package:archery/screens/homescreen/homescreen.dart';
-import 'package:archery/screens/session/game/components/players.dart';
+import 'package:archery/screens/session/game/components/scorescreen.dart';
 import 'package:archery/screens/session/player/playerscreen.dart';
 import 'package:archery/screens/session/sessionscreen.dart';
 import 'package:flutter/material.dart';
@@ -17,9 +17,10 @@ MaterialPageRoute routing (settings) {
 
   var uri = Uri.parse(settings.name);
 
+
   if (uri.pathSegments.first == 'session') {
-    String sessionId = uri.pathSegments[1];
-    return MaterialPageRoute(builder: (context) => SessionScreen(sessionId: sessionId));
+    String sessionUuid = uri.pathSegments[1];
+    return MaterialPageRoute(builder: (context) => SessionScreen(sessionUuid: sessionUuid));
   }
 
   return MaterialPageRoute(builder: (context) => HomeScreen());

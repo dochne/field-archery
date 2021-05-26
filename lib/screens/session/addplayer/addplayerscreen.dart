@@ -3,7 +3,6 @@ import 'package:archery/models/bow_type.dart';
 import 'package:archery/models/player.dart';
 import 'package:archery/models/session.dart';
 import 'package:archery/state/active_session.dart';
-import 'package:archery/state/current_session.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,15 +16,15 @@ class AddPlayerScreen extends StatefulWidget {
 }
 
 class _AddPlayerScreenState extends State<AddPlayerScreen> {
-  final List<Player> _players = [
-    new Player(name: "Ben"),
-    new Player(name: "Dave"),
-    new Player(name: "Doug"),
-    new Player(name: "Em"),
-    new Player(name: "Goughy"),
-    new Player(name: "Marina"),
-    new Player(name: "Sam"),
-  ];
+  // final List<Player> _players = [
+  //   new Player(name: "Ben"),
+  //   new Player(name: "Dave"),
+  //   new Player(name: "Doug"),
+  //   new Player(name: "Em"),
+  //   new Player(name: "Goughy"),
+  //   new Player(name: "Marina"),
+  //   new Player(name: "Sam"),
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -68,53 +67,53 @@ class _AddPlayerScreenState extends State<AddPlayerScreen> {
           )
         ]),
         floatingActionButton: FloatingActionButton(
-          onPressed: () { _addPlayers(context, activeSession); },
-          tooltip: 'Add Player',
+          onPressed: () { /*_addPlayers(context, activeSession);*/ },
+          tooltip: 'Hey o',
           child: Icon(Icons.add),
         ), // This trailing comma makes auto-formatting nicer for build methods.
       );
     });
   }
-
-
-  Future<void> _addPlayers(BuildContext context, ActiveSession activeSession) async {
-    List<SimpleDialogOption> list = [];
-
-    //List<String> _friends = ["Doug", "Steve", "Ben"];
-    List<Player> _notPlaying = [];
-    _players.forEach((player) {
-      if (!activeSession.hasPlayer(player)) {
-        _notPlaying.add(player);
-      }
-    });
-
-    //for (var i = 0; i < _friends.length; i++) {
-    _notPlaying.forEach((Player player) {
-      // String name = _players[i];
-
-      list.add(SimpleDialogOption(
-          onPressed: () {
-            Navigator.pop(context, player);
-          },
-          child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0),
-              child: Text(player.name))));
-    });
-
-
-    Player? player = await showDialog<Player>(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(title: const Text('Add Player'), children: list);
-        }
-    );
-
-    if (player != null) {
-      setState(() {
-        activeSession.addPlayer(player/*, new BowType(bowType: "compound")*/);
-      });
-      //   activePlayers.add(new Player(name: value));
-    }
-  }
+  //
+  //
+  // Future<void> _addPlayers(BuildContext context, ActiveSession activeSession) async {
+  //   List<SimpleDialogOption> list = [];
+  //
+  //   //List<String> _friends = ["Doug", "Steve", "Ben"];
+  //   List<Player> _notPlaying = [];
+  //   _players.forEach((player) {
+  //     if (!activeSession.hasPlayer(player)) {
+  //       _notPlaying.add(player);
+  //     }
+  //   });
+  //
+  //   //for (var i = 0; i < _friends.length; i++) {
+  //   _notPlaying.forEach((Player player) {
+  //     // String name = _players[i];
+  //
+  //     list.add(SimpleDialogOption(
+  //         onPressed: () {
+  //           Navigator.pop(context, player);
+  //         },
+  //         child: Padding(
+  //             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0),
+  //             child: Text(player.name))));
+  //   });
+  //
+  //
+  //   Player? player = await showDialog<Player>(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return SimpleDialog(title: const Text('Add Player'), children: list);
+  //       }
+  //   );
+  //
+  //   if (player != null) {
+  //     setState(() {
+  //       activeSession.addPlayer(player/*, new BowType(bowType: "compound")*/);
+  //     });
+  //     //   activePlayers.add(new Player(name: value));
+  //   }
+  // }
 }
 
