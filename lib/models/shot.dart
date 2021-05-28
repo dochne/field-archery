@@ -20,22 +20,21 @@ class Shot {
     return new Shot._(DateTime.now(), bowType, score);
   }
 
-  Shot fromJson(String json){
-    var decoded = jsonDecode(json);
+  Shot fromMap(Map<String, dynamic> map){
     return new Shot._(
-        DateTime.fromMillisecondsSinceEpoch(decoded['scoredTime']),
+        DateTime.fromMillisecondsSinceEpoch(map['scoredTime']),
         new BowType('compound_ul', "Compound unlimited"),
-        decoded['score']
+        map['score']
     );
   }
 
-  toJson() {
-    return jsonEncode({
+  Map toMap() {
+    return {
       "scoredTime": this.scoredTime.millisecondsSinceEpoch,
       // "player": this.player.uuid,
       "bowType": this.bowType.id,
       // "target": this.target,
       "score": this.score
-    });
+    };
   }
 }

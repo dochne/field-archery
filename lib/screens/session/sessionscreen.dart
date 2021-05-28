@@ -25,14 +25,20 @@ class SessionScreen extends StatefulWidget {
 class _SessionScreenState extends State<SessionScreen> {
   @override
   Widget build(BuildContext context) {
-    int _index = 0;
-
     return FutureBuilder(
         future: this.loadSession(widget.sessionUuid),
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
             return Text("Loading...");
           }
+
+          debugPrint("Building now as it's done");
+          debugPrint("Session UUID");
+          debugPrint(widget.sessionUuid.toString());
+          debugPrint("Session Connection State");
+          debugPrint(snapshot.connectionState.toString());
+          debugPrint("Session Data");
+          debugPrint(snapshot.data.toString());
 
           return ChangeNotifierProvider(
               create: (context) => ActiveSession(snapshot.data as Session),
@@ -82,7 +88,13 @@ class _SessionScreenState extends State<SessionScreen> {
 
 
   Future<Session> loadSession(String sessionUuid) async {
-    return (await Sessions.create()).get(sessionUuid);
+    debugPrint("Loading session");
+    var v = (await Sessions.create());
+    debugPrint("Before Session Get");
+    var v2 = v.get(sessionUuid);
+    debugPrint("After Session Get");
+    debugPrint(v2.toString());
+    return v2;
   }
 }
       // return SizedBox();

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:archery/models/player.dart';
 import 'package:archery/models/session.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,15 +13,13 @@ class Players
 
   static Future<Players> create() async {
     var instance = Players._(await SharedPreferences.getInstance());
-    //var p = await SharedPreferences.getInstance();
-    //
-    // (await SharedPreferences.getInstance()).clear();
-    // if (instance._list().length == 0) {
-    //   var names = ["Ben", "Dave", "Doug", "Em", "Goughy", "Marina", "Sam"];
-    //   names.forEach((name) {
-    //     instance.add(Player.createFromName(name));
-    //   });
-    // }
+
+    if (instance._list().length == 0) {
+      var names = ["Ben", "Dave", "Doug", "Em", "Goughy", "Marina", "Sam"];
+      names.forEach((name) {
+        instance.add(Player.createFromName(name));
+      });
+    }
     return instance;
   }
 
@@ -39,13 +39,14 @@ class Players
   }
 
   save(Player player) {
-    this.prefs.setString(this._key(player.uuid), player.toString());
+    this.prefs.setString(this._key(player.uuid), jsonEncode(player.toMap()));
   }
 
   Player get(String uuid) {
     var value = this.prefs.getString(this._key(uuid));
+    var decoded = jsonDecode(value!);
     debugPrint("Get is being called");
-    return Player.fromJson(value!);
+    return Player.fromMap(decoded);
   }
 
   has(String uuid) {

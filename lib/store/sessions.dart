@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:archery/models/session.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,14 +29,26 @@ class Sessions {
   }
 
   save(Session session) {
-    debugPrint(session.toString());
-    this.prefs.setString(this._key(session.uuid), session.toString());
+    this.prefs.setString(this._key(session.uuid), jsonEncode(session.toMap()));
   }
 
   Session get(String uuid) {
     var value = this.prefs.getString(this._key(uuid));
+    debugPrint("Got value");
     debugPrint(value);
-    return Session.fromString(this, value!);
+    if (value == null) {
+      debugPrint("Bringing back new");
+      return Session.createNew(this);
+    }
+    debugPrint("Bringing back existing");
+    debugPrint(value);
+
+    var decoded = jsonDecode(value);
+
+    var v2 = Session.fromMap(this, decoded);
+    debugPrint("I'll be returning this ty");
+    debugPrint(v2.toString());
+    return v2;
   }
 
   has(String uuid) {

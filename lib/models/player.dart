@@ -10,17 +10,15 @@ class Player {
   @override
   Player._(this.uuid, this.name);
 
-  toJson() {
-    return jsonEncode({
+  Map toMap() {
+    return {
       "uuid": this.uuid,
       "name": this.name
-    });
+    };
   }
 
-  static fromJson(String string) {
-    var decoded = jsonDecode(string);
-    debugPrint(decoded.toString());
-    return Player._(decoded['uuid'], decoded['name']);
+  static fromMap(Map<String, dynamic> map) {
+    return Player._(map['uuid'], map['name']);
   }
 
   static createFromName(String name) {

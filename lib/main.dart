@@ -4,6 +4,8 @@ import 'package:archery/theme/style.dart';
 import 'package:flutter/material.dart';
 import 'package:archery/routes.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 void main() {
   // runApp(
@@ -16,8 +18,30 @@ void main() {
   //   )
   // );
 
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(
-      MyApp()
+    MyApp()
+    // FutureBuilder(
+    //     builder: (context, snapshot) {
+    //       if (snapshot.connectionState == ConnectionState.done) {
+    //         return MyApp();
+    //       }
+    //
+    //       return Text("Oh snap");
+    //
+    //     },
+    //     future: clearStuff()
+    // )
+      // MyApp()
+      //
+      // MultiProvider(
+      //     providers: [
+      //       ChangeNotifierProvider(create: (context) => ActivePlayersModel()),
+      //       ChangeNotifierProvider(create: (context) => ActiveSession()),
+      //     ],
+      //     child: MyApp()
+      // )
   );
 }
 

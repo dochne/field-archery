@@ -19,14 +19,26 @@ class Session {
   @override
   Session._(this.sessions, this.uuid, this.startTime);
 
-  static Session fromString(Sessions sessions, String string) {
-    var data = jsonDecode(string);
+  static Session fromMap(Sessions sessions, Map<String, dynamic> data) {
+    debugPrint("Building session");
+    debugPrint(data.toString());
     var session = Session._(sessions, data['uuid'], DateTime.fromMillisecondsSinceEpoch(data['startTime']));
 
-    data['players'].forEach((json) {
-      session.players.add(Player.fromJson(string));
-    });
+    debugPrint("Session built");
+    debugPrint(data.toString());
 
+    debugPrint(data['players'].toString());
+    // var players = data['players'] as List<Map<String, dynamic>>;
+    //
+    debugPrint("Players");
+    // players.forEach((map) {
+    //   // debugPrint(map.toString());
+    //   //session.players.add(Player.fromMap(map));
+    // });
+
+    debugPrint("FromJSON");
+    debugPrint(session.toString());
+    debugPrint("After fromSession");
     return session;
   }
 
@@ -38,25 +50,28 @@ class Session {
     this.sessions.save(this);
   }
 
-  toString() {
-    List<String> players = [];
+  toMap() {
+    List<Map> players = [];
     this.players.forEach((Player player) {
-      players.add(player.toJson());
+      players.add(player.toMap());
     });
 
-    List<String> shots = [];
-    this._shots.forEach((player, map) {
-      map.forEach((_, shot) {
-        shots.add(shot.toString());
+    List<Map> shots = [];
+    this._shots.forEach((player, targetShot) {
+      targetShot.forEach((target, shot) {
+        var map = shot.toMap();
+        map['player'] = player.uuid;
+        map['target'] = target;
+        shots.add(map);
       });
     });
 
-    return jsonEncode({
+    return {
       "uuid": this.uuid,
       "startTime": this.startTime.millisecondsSinceEpoch,
       "players": players,
       "shots": shots
-    });
+    };
   }
 
 

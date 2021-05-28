@@ -2,6 +2,7 @@ import 'package:archery/models/session.dart';
 import 'package:archery/store/sessions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -43,6 +44,7 @@ class HomeScreen extends StatelessWidget {
               onPressed: () async {
                 var sessions = await Sessions.create();
                 var session = Session.createNew(sessions);
+                session.save();
                 sessions.add(session);
 
                 Navigator.pushNamed(
@@ -52,6 +54,7 @@ class HomeScreen extends StatelessWidget {
                 // DateTime now = new DateTime.now();
               },
             ),
+
             Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0)
             ),
@@ -66,12 +69,33 @@ class HomeScreen extends StatelessWidget {
                 _selectExistingSession(context);
               }
             ),
+
+            Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0)
+            ),
+            ElevatedButton(
+                child: Container(
+                    constraints: BoxConstraints(minWidth: 200, minHeight: 50, maxWidth: 200),
+                    // padding: EdgeInsets.symmetric(vertical: 15, horizontal: 40.0),
+                    child: Align(alignment: Alignment.center, child: Text("Delete State"))
+                ),
+                onPressed: () async {
+                  await clearStuff();
+                }
+            ),
         ]),
     )
     );
   }
 
 
+  Future<SharedPreferences> clearStuff() async {
+    var prefManager = await SharedPreferences.getInstance();
+    await prefManager.clear();
+    // debugPrint("Clearing");
+    // (await SharedPreferences.getInstance()).clear();
+    return prefManager;
+  }
 
 
   Future<void> _selectExistingSession(BuildContext context) async {
