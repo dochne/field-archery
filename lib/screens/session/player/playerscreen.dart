@@ -1,5 +1,4 @@
-import 'package:archery/models/active_players.dart';
-import 'package:archery/models/bow_type.dart';
+
 import 'package:archery/models/player.dart';
 import 'package:archery/store/players.dart';
 import 'package:archery/models/session.dart';
@@ -9,12 +8,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class PlayerScreen extends StatefulWidget {
-  // final String sessionId;
+  final ActiveSession activeSession;
   // const PlayerScreen({Key? key, required this.sessionId}) : super(key: key);
   final String title = "Add Players";
 
+
   @override
+  const PlayerScreen({Key? key, required this.activeSession}) : super(key: key);
   _PlayerScreenState createState() => _PlayerScreenState();
+  //
+  // @override
+  // _PlayerScreenState createState() => _PlayerScreenState();
 }
 
 class _PlayerScreenState extends State<PlayerScreen> {
@@ -26,7 +30,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Consumer<ActiveSession>(builder: (context, activeSession, child) {
+    // return Consumer<ActiveSession>(builder: (context, activeSession, child) {
+      var activeSession = widget.activeSession;
 
       return Scaffold(
         // appBar: AppBar(
@@ -65,7 +70,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
           child: Icon(Icons.add),
         ), // This trailing comma makes auto-formatting nicer for build methods.
       );
-    });
+    // });
   }
 
 

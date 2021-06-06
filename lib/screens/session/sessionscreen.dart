@@ -2,7 +2,7 @@ import 'package:archery/models/session.dart';
 import 'package:archery/screens/session/game/gamescreen.dart';
 import 'package:archery/screens/session/player/playerscreen.dart';
 import 'package:archery/state/active_session.dart';
-import 'package:archery/store/sessions.dart';
+import 'package:archery/store/session_store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,35 +22,44 @@ class SessionScreen extends StatefulWidget {
   _SessionScreenState createState() => _SessionScreenState();
 }
 
+
+Future<ActiveSession?> logError(dynamic e, StackTrace stackTrace) async {
+  debugPrint("Yay cat");
+  debugPrint(e.toString());
+  debugPrint(stackTrace.toString());
+  return null;
+}
+
+Future<ActiveSession?> createActiveSession(String sessionUuid) async {
+  return ActiveSession.createFromDatabase(sessionUuid);
+}
+
+
 class _SessionScreenState extends State<SessionScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: this.loadSession(widget.sessionUuid),
+        future: createActiveSession(widget.sessionUuid).catchError(logError),
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
             return Text("Loading...");
           }
 
-          debugPrint("Building now as it's done");
-          debugPrint("Session UUID");
-          debugPrint(widget.sessionUuid.toString());
-          debugPrint("Session Connection State");
-          debugPrint(snapshot.connectionState.toString());
-          debugPrint("Session Data");
-          debugPrint(snapshot.data.toString());
+          if (snapshot.data == null) {
+            return Text("It's still null I'm afraid");
+          }
 
           return ChangeNotifierProvider(
-              create: (context) => ActiveSession(snapshot.data as Session),
+              create: (context) => snapshot.data as ActiveSession,
               child: Consumer<ActiveSession>(
                   builder: (context, activeSession, _) {
                     Widget child;
                     switch (activeSession.screen) {
                       case 0:
-                        child = PlayerScreen();
+                        child = PlayerScreen(activeSession: activeSession);
                         break;
                       default:
-                        child = GameScreen();
+                        child = GameScreen(activeSession: activeSession);
                         break;
                     }
 
@@ -84,17 +93,6 @@ class _SessionScreenState extends State<SessionScreen> {
           );
        }
     );
-  }
-
-
-  Future<Session> loadSession(String sessionUuid) async {
-    debugPrint("Loading session");
-    var v = (await Sessions.create());
-    debugPrint("Before Session Get");
-    var v2 = v.get(sessionUuid);
-    debugPrint("After Session Get");
-    debugPrint(v2.toString());
-    return v2;
   }
 }
       // return SizedBox();

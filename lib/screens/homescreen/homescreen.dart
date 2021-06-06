@@ -1,5 +1,6 @@
 import 'package:archery/models/session.dart';
-import 'package:archery/store/sessions.dart';
+import 'package:archery/state/database_layer.dart';
+import 'package:archery/store/session_store.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -42,10 +43,13 @@ class HomeScreen extends StatelessWidget {
                 child: Align(alignment: Alignment.center, child: Text("Create Game"))
               ),
               onPressed: () async {
-                var sessions = await Sessions.create();
-                var session = Session.createNew(sessions);
-                session.save();
-                sessions.add(session);
+                // var sessions = await Sessions.create();
+                // var session = Session.createNew(sessions);
+                // session.save();
+                // sessions.add(session);
+                var store = SessionStore.create(await DatabaseLayer.getInstance());
+                var session = Session.createNew();
+                await store.save(session);
 
                 Navigator.pushNamed(
                   context,
@@ -101,20 +105,21 @@ class HomeScreen extends StatelessWidget {
   Future<void> _selectExistingSession(BuildContext context) async {
     List<SimpleDialogOption> list = [];
 
-    var sessions = (await Sessions.create()).all();
+    // var sessions = (await SessionStore.create()).all();
+    var sessions = [];
 
     //for (var i = 0; i < _friends.length; i++) {
-    sessions.forEach((Session session) {
-      // String name = _players[i];
-
-      list.add(SimpleDialogOption(
-          onPressed: () {
-            Navigator.pop(context, session);
-          },
-          child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0),
-              child: Text(session.startTime.toString()))));
-    });
+    // sessions.forEach((Session session) {
+    //   // String name = _players[i];
+    //
+    //   list.add(SimpleDialogOption(
+    //       onPressed: () {
+    //         Navigator.pop(context, session);
+    //       },
+    //       child: Padding(
+    //           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0),
+    //           child: Text(session.startTime.toString()))));
+    // });
 
 
     Session? session = await showDialog<Session>(

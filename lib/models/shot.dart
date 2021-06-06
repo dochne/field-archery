@@ -23,7 +23,7 @@ class Shot {
   Shot fromMap(Map<String, dynamic> map){
     return new Shot._(
         DateTime.fromMillisecondsSinceEpoch(map['scoredTime']),
-        new BowType('compound_ul', "Compound unlimited"),
+        BowType.createCompound(),
         map['score']
     );
   }

@@ -1,10 +1,10 @@
-import 'package:archery/models/active_players.dart';
-import 'package:archery/state/active_session.dart';
+
 import 'package:archery/theme/style.dart';
 import 'package:flutter/material.dart';
 import 'package:archery/routes.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 
 
 void main() {
@@ -19,6 +19,9 @@ void main() {
   // );
 
   WidgetsFlutterBinding.ensureInitialized();
+
+    //var databasesPath = await getDatabasesPath();
+
 
   runApp(
     MyApp()

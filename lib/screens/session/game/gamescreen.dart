@@ -5,11 +5,17 @@ import 'package:provider/provider.dart';
 
 class GameScreen extends StatefulWidget {
   // final String sessionId;
+  final ActiveSession activeSession;
   final String title = "Scoring";
 
   // const GameScreen({Key? key, required this.sessionId}) : super(key: key);
 
+  // @override
+  // _GameScreenState createState() => _GameScreenState();
+
+
   @override
+  const GameScreen({Key? key, required this.activeSession}) : super(key: key);
   _GameScreenState createState() => _GameScreenState();
 }
 
@@ -21,8 +27,9 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
-
-    return Consumer<ActiveSession>(builder: (context, activeSession, child) {
+    var activeSession = widget.activeSession;
+    
+    // return Consumer<ActiveSession>(builder: (context, activeSession, child) {
       return new Builder(builder: (context) {
         final PageController controller = PageController(
             initialPage: activeSession.getLastViewedTarget() - 1
@@ -74,7 +81,7 @@ class _GameScreenState extends State<GameScreen> {
             //                 ]))))
         //]);
       });
-      });
+      // });
   }
 }
 
