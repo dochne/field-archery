@@ -47,6 +47,19 @@ class DatabaseLayer {
     return await this.database.rawQuery(sql, parameters);
   }
 
+
+  Future<bool> delete(String table, Map<String, String> where) async {
+    var sql = "DELETE FROM $table WHERE true ";
+    List<String> parameters = [];
+    where.forEach((key, value) {
+      sql += " AND $key=?";
+      parameters.add(value);
+    });
+    await this.database.rawQuery(sql, parameters);
+    // Todo: fix me
+    return true;
+  }
+
   Future<Map<String, Object?>?> selectSingle(String table, Map<String, String> where) async {
     var data = await this.select(table, where);
     if (data.length == 0) {
@@ -56,6 +69,26 @@ class DatabaseLayer {
     return data.first;
   }
 
+  Future<List<Map<String, Object?>>> query(String sql, List<Object?>? parameters) async {
+    return await this.database.rawQuery(sql, parameters);
+  }
+
+  insert(String table, Map<String, dynamic> data) async {
+    var from = [];
+    var values = [];
+    var parameters = [];
+
+    data.forEach((key, value) {
+      from.add(key);
+      values.add("?");
+      parameters.add(value);
+    });
+
+    var sql = "INSERT INTO $table (" + from.join(", ") + ") " +
+        "VALUES (" + values.join(",") + ")";
+
+    this.database.rawQuery(sql, parameters);
+  }
 
   upsert(String table, Map<String, dynamic> data, String conflictKey) async {
     var from = [];
@@ -104,19 +137,19 @@ class DatabaseLayer {
           // await db.execute("INSERT INTO session(uuid, startTime) VALUES ('5', 5)");
         },
         onUpgrade: (db, oldVersion, newVersion) async {
-          await db.execute('DROP TABLE session');
-          // await db.execute('DROP TABLE session_player');
-          await db.execute('DROP TABLE shot');
-          await db.execute('DROP TABLE player');
-          await db.execute('CREATE TABLE session (uuid STRING PRIMARY KEY, startTime INTEGER, name STRING, players STRING);');
-          // await db.execute('CREATE TABLE session_player (session_uuid STRING, player STRING);');
-          await db.execute('CREATE TABLE shot (session_uuid STRING, target INTEGER, score INTEGER);');
+          await db.execute('DROP TABLE IF EXISTS session');
+          await db.execute('DROP TABLE IF EXISTS session_player');
+          await db.execute('DROP TABLE IF EXISTS  shot');
+          await db.execute('DROP TABLE IF EXISTS player');
+          await db.execute('CREATE TABLE session (uuid STRING PRIMARY KEY, start_time INTEGER, name STRING);');
+          await db.execute('CREATE TABLE session_player (session_uuid STRING, player_uuid STRING);');
+          await db.execute('CREATE TABLE shot (session_uuid STRING, player_uuid STRING, scored_time INTEGER, target INTEGER, score INTEGER);');
           await db.execute('CREATE TABLE player (uuid STRING, name STRING)');
           ["Ben", "Dave", "Doug", "Em", "Goughy", "Marina", "Sam"].forEach((element) async {
             await db.execute("INSERT INTO player (uuid, name) VALUES (?, ?)", [Uuid().v4(), element]);
           });
         },
-        version: 3,
+        version: 7,
       );
 
       DatabaseLayer._instance = DatabaseLayer(database);

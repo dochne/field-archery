@@ -24,14 +24,15 @@ class SessionScreen extends StatefulWidget {
 
 
 Future<ActiveSession?> logError(dynamic e, StackTrace stackTrace) async {
-  debugPrint("Yay cat");
+  debugPrint("Failed to create Session:");
   debugPrint(e.toString());
   debugPrint(stackTrace.toString());
   return null;
 }
 
 Future<ActiveSession?> createActiveSession(String sessionUuid) async {
-  return ActiveSession.createFromDatabase(sessionUuid);
+  debugPrint("Loading ActiveSession: " + sessionUuid);
+  return ActiveSession.load(sessionUuid);
 }
 
 

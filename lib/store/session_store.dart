@@ -17,12 +17,19 @@ class SessionStore {
   }
 
   Future<Session?> findOneByUuid (String uuid) async {
-    var data = await db.select("session", {"uuid": uuid});
-    if (data.isEmpty) {
+    var sessions = await db.select("session", {"uuid": uuid});
+    if (sessions.isEmpty) {
       return null;
     }
 
-    return Session.createFromMap(data.first);
+    debugPrint(sessions.first.toString());
+    return Session.fromMap(sessions.first);
+  }
+
+  Future<List<Session>> all() async {
+    var sessions = await db.select("session", {});
+
+    return Session.createListFromMap(sessions);
   }
 
   Future<bool> save(Session session) async {

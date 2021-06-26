@@ -105,21 +105,19 @@ class HomeScreen extends StatelessWidget {
   Future<void> _selectExistingSession(BuildContext context) async {
     List<SimpleDialogOption> list = [];
 
-    // var sessions = (await SessionStore.create()).all();
-    var sessions = [];
+    var databaseLayer = await DatabaseLayer.getInstance();
+    var sessionStore = await SessionStore.create(databaseLayer);
+    var sessions = (await sessionStore.all()).forEach((Session session) {
+      // String name = _players[i];
 
-    //for (var i = 0; i < _friends.length; i++) {
-    // sessions.forEach((Session session) {
-    //   // String name = _players[i];
-    //
-    //   list.add(SimpleDialogOption(
-    //       onPressed: () {
-    //         Navigator.pop(context, session);
-    //       },
-    //       child: Padding(
-    //           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0),
-    //           child: Text(session.startTime.toString()))));
-    // });
+      list.add(SimpleDialogOption(
+          onPressed: () {
+            Navigator.pop(context, session);
+          },
+          child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0),
+              child: Text(session.name))));
+    });
 
 
     Session? session = await showDialog<Session>(

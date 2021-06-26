@@ -2,6 +2,7 @@ import 'package:archery/models/bow_type.dart';
 import 'package:archery/models/player.dart';
 import 'package:archery/state/database_layer.dart';
 import 'package:archery/store/session_store.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
@@ -9,34 +10,39 @@ class Session {
   final String uuid;
   final String name;
   final DateTime startTime;
-  final Map<Player, BowType> players;
+  // final Map<Player, BowType> players;
 
   @override
-  Session._(this.uuid, this.startTime, this.name, this.players);
+  Session._(this.uuid, this.startTime, this.name);
 
-  static Session createFromMap(Map<String, dynamic> map) {
+  static Session fromMap(Map<String, dynamic> map) {
     return Session._(
         map['uuid'].toString(),
-        DateTime.fromMillisecondsSinceEpoch(map['startTime']),
+        DateTime.fromMillisecondsSinceEpoch(map['start_time']),
         map['name'],
-        map['players'],
     );
+  }
+
+
+  static List<Session> createListFromMap(List<Map<String, dynamic>> list) {
+    debugPrint("Creating list from map");
+    return list.map((map) => Session.fromMap(map)).toList();
   }
 
   static Session createNew() {
     var date = DateTime.now();
-    return Session._(Uuid().v4(), date, DateFormat('EEEE a, d MMM, yyyy').format(date), {});
+    return Session._(Uuid().v4(), date, DateFormat('H:mm EEEE, d MMM, yyyy').format(date));
   }
 
-  static SessionStore createStore(DatabaseLayer databaseLayer) {
-    return SessionStore.create(databaseLayer);
-  }
+  // static SessionStore createStore(DatabaseLayer databaseLayer) {
+  //   return SessionStore.create(databaseLayer);
+  // }
 
   toMap() {
     return {
       "uuid": this.uuid,
       "name": this.name,
-      "startTime": this.startTime.millisecondsSinceEpoch,
+      "start_time": this.startTime.millisecondsSinceEpoch,
     };
   }
 

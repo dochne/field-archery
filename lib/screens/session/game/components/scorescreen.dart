@@ -23,7 +23,15 @@ class ScoreScreen extends StatelessWidget {
               DataCell(Text(this.activeSession.getTotalScore(player).toString())),
               DataCell(Text(score == null ? '-' : score.toString()), showEditIcon: true, onTap: () async {
                 int? score = await getScore(context);
-                this.activeSession.shoot(player, target, score);
+
+                // null = didn't click an option
+                // -1 = clicked did not shoot
+
+                if (score != null) {
+                  score = score != -1 ? score : null;
+                  this.activeSession.shoot(player, target, score);
+                }
+
                 // this.currentSession.setScoreForPlayer(player, score);
               }),
             ]
@@ -68,7 +76,7 @@ class ScoreScreen extends StatelessWidget {
       8: "8 - Third kill",
       4: "4 - Third wound",
       0: "0 - Miss",
-      null: "Did not shoot"
+      -1: "Did not shoot"
     };
 
     //for (int? score, String text in shotTypes) {
