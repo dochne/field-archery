@@ -33,7 +33,7 @@ class SessionStore {
   }
 
   Future<bool> save(Session session) async {
-    await db.upsert("session", session.toMap(), 'uuid');
+    await db.upsert("session", session.toMap(), ['uuid']);
     return true;
   }
 }

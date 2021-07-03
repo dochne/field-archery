@@ -18,7 +18,11 @@ class PlayerStore {
   }
 
   Future<List<Player>> all() async {
-    return Player.createListFromMap(await this.db.select("player", {}));
+    return Player.createListFromMap(await this.db.select("player", {}, orderBy: ["name"]));
+  }
+
+  Future<void> add(Player player) async {
+    await this.db.insert("player", {"uuid": player.uuid, "name": player.name});
   }
 
 

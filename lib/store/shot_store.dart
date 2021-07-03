@@ -37,7 +37,15 @@ class ShotStore {
   }
 
   add(Shot shot) async {
-    await this.db.insert("shot", shot.toMap());
+    await this.db.upsert("shot", shot.toMap(), ["session_uuid", "player_uuid", "target"]);
+  }
+
+  remove(Session session, Player player, int target) async {
+    await this.db.delete("shot", {
+      "session_uuid": session.uuid,
+      "player_uuid": player.uuid,
+      "target": target.toString()
+    });
   }
   //
   //

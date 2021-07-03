@@ -90,6 +90,7 @@ class ActiveSession extends ChangeNotifier {
       return;
     }
 
+    shotStore.remove(session, player, target);
     this.playerTargetShotMap[player]?.remove(target);
     notifyListeners();
   }

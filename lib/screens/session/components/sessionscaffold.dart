@@ -31,14 +31,20 @@ class SessionScaffold extends StatelessWidget {
         ),
         body: this.body,
         bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
+          items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
+
               icon: Icon(Icons.person),
               label: 'Players',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.emoji_events),
-              label: 'Scoring',
+              label: 'Scoring'
+
+
+              //Icon(Icons.emoji_events),
+              // label: 'Scoring',
+
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.bar_chart),

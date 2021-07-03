@@ -1,4 +1,5 @@
 
+import 'package:archery/dialog/input.dart';
 import 'package:archery/models/player.dart';
 import 'package:archery/state/database_layer.dart';
 import 'package:archery/store/player_store.dart';
@@ -84,6 +85,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
     debugPrint(activeSession.players.length.toString());
 
+    var newPlayer = Player.createFromName("New Player!");
+    
     (await playerStore.all())
         .where((player) => !activeSession.hasPlayer(player))
         .forEach((Player player) {
@@ -97,6 +100,27 @@ class _PlayerScreenState extends State<PlayerScreen> {
                   child: Text(player.name))));
         });
 
+    list.add(SimpleDialogOption(
+      onPressed: () {
+        Navigator.pop(context, newPlayer);
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Divider(
+            color: Colors.grey,
+            height: 20,
+            thickness: 2,
+            indent: 10,
+            endIndent: 10,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 0),
+            child: Text("New Player!")
+          )
+        ]
+      )
+    ));
 
     Player? player = await showDialog<Player>(
         context: context,
@@ -105,12 +129,24 @@ class _PlayerScreenState extends State<PlayerScreen> {
         }
     );
 
-    if (player != null) {
-      setState(() {
-        activeSession.addPlayer(player/*, new BowType(bowType: "compound")*/);
-      });
-      //   activePlayers.add(new Player(name: value));
+    if (player == null) {
+      return;
     }
+
+    if (player.uuid == newPlayer.uuid) {
+      var input = await inputDialog(context, new TextEditingController(), "Enter New Player Name");
+      if (input == null || input == '') {
+        return;
+      }
+      player = Player.createFromName(input);
+      playerStore.add(player!);
+    }
+
+    setState(() {
+      activeSession.addPlayer(player!/*, new BowType(bowType: "compound")*/);
+    });
+
+      //   activePlayers.add(new Player(name: value));
     //
     // if (player != null) {
     //   setState(() {

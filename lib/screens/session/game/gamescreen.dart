@@ -1,7 +1,9 @@
+import 'package:archery/dialog/select.dart';
 import 'package:archery/screens/session/game/components/scorescreen.dart';
 import 'package:archery/state/active_session.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
 class GameScreen extends StatefulWidget {
   // final String sessionId;
@@ -44,57 +46,44 @@ class _GameScreenState extends State<GameScreen> {
                   activeSession.setLastViewedTarget(index + 1);
                 },
                 itemBuilder: (context, index) {
-                  return buildPage(context, activeSession, index + 1);
-                  // return Center(
-                  //   child: Text('Fi' + index.toString()),
-                  // );
+                  return buildPage(context, activeSession, controller, index + 1);
                 }
             );//,
-            // Expanded(
-            //     child: Align(
-            //         alignment: FractionalOffset.bottomCenter,
-            //         child: Padding(
-            //             padding: EdgeInsets.symmetric(vertical: 15),
-            //             child: Row(
-            //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //                 crossAxisAlignment: CrossAxisAlignment.start,
-            //                 children: [
-            //                   ElevatedButton(
-            //                     child: Icon(Icons.skip_previous),
-            //                     onPressed: () {
-            //                       // activeSession.previousTarget();
-            //                     },
-            //                   ),
-            //                   ElevatedButton(
-            //                     child: Text("Target hi"), // +
-            //                     // activeSession.currentTarget.toString()),
-            //                     onPressed: () {
-            //                       // currentSession.nextTarget();
-            //                     },
-            //                   ),
-            //                   ElevatedButton(
-            //                     child: Icon(Icons.skip_next),
-            //                     onPressed: () {
-            //                       // activeSession.nextTarget();
-            //                     },
-            //                   )
-            //                 ]))))
-        //]);
       });
       // });
   }
 }
 
-Widget buildPage(context, activeSession, int currentTarget) {
+Widget buildPage(context, ActiveSession activeSession, PageController controller, int currentTarget) {
   return Center(
       child: Column(
           children: [
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
-                child: Text("Target " + currentTarget.toString(), textAlign: TextAlign.center, textScaleFactor: 2,),
+                child: GestureDetector(
+                    onTap: () async {
+                      await selectTarget(context, controller);
+                      // selectTarget();
+                    },
+                    child: Text("Target " + currentTarget.toString(), textAlign: TextAlign.center, textScaleFactor: 2,),
+                )
               ),
               ScoreScreen(activeSession, currentTarget),
             ])
   ]));
+}
+
+
+selectTarget(context, PageController controller) async {
+  var target = await selectDialog<int>(
+      context,
+      "Jump to Target!",
+      (List<int>.generate(40, (i) => i + 1)).map((v) => Tuple2<int, String>(v, (v).toString()))
+  );
+
+  if (target != null) {
+    debugPrint("Jumping to " + (target - 1).toString());
+    controller.jumpToPage(target - 1);
+  }
 }

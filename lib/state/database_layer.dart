@@ -37,13 +37,21 @@ class DatabaseLayer {
   //   return response.length == 0 ? null : response.first;
   // }
 
-  Future<List<Map<String, Object?>>> select(String table, Map<String, String> where) async {
-    var sql = "SELECT * FROM $table WHERE true ";
+  Future<List<Map<String, Object?>>> select(String table, Map<String, String> where, {List<String> orderBy = const []}) async {
+    var sql = "SELECT * FROM $table ";
     List<String> parameters = [];
+
+    sql += " WHERE true ";
     where.forEach((key, value) {
-      sql += " AND $key=?";
+      sql += " AND $key=? ";
       parameters.add(value);
     });
+
+    sql += "ORDER BY true ";
+    orderBy.forEach((column) {
+      sql += ", $column ";
+    });
+
     return await this.database.rawQuery(sql, parameters);
   }
 
@@ -90,11 +98,12 @@ class DatabaseLayer {
     this.database.rawQuery(sql, parameters);
   }
 
-  upsert(String table, Map<String, dynamic> data, String conflictKey) async {
+  upsert(String table, Map<String, dynamic> data, List<String> conflictKeys) async {
     var from = [];
     var values = [];
     var parameters = [];
     var conflictSet = [];
+    var conflictKey = conflictKeys.join(", ");
 
     data.forEach((key, value) {
       from.add(key);
@@ -102,6 +111,8 @@ class DatabaseLayer {
       parameters.add(value);
       conflictSet.add("$key = excluded.$key");
     });
+
+
 
     var sql = "INSERT INTO $table (" + from.join(", ") + ") " +
                 "VALUES (" + values.join(",") + ") " +
@@ -127,29 +138,43 @@ class DatabaseLayer {
 // void save(Session session) {
 //   var data = await db.upsert("session", session.toMap(), {"uuid": uuid});
 
+  static getDatabaseFilename() async {
+    return join(await getDatabasesPath(), 'field_archery.db');
+  }
+
+  static drop() async {
+    DatabaseLayer._instance = null;
+    await deleteDatabase(
+      await getDatabaseFilename()
+    );
+    await DatabaseLayer.getInstance();
+  }
+
+  static seed(db) async {
+    await db.execute('DROP TABLE IF EXISTS session');
+    await db.execute('DROP TABLE IF EXISTS session_player');
+    await db.execute('DROP TABLE IF EXISTS  shot');
+    await db.execute('DROP TABLE IF EXISTS player');
+    await db.execute('CREATE TABLE session (uuid STRING PRIMARY KEY, start_time INTEGER, name STRING);');
+    await db.execute('CREATE TABLE session_player (session_uuid STRING, player_uuid STRING);');
+    await db.execute('CREATE TABLE shot (session_uuid STRING, player_uuid STRING, scored_time INTEGER, target INTEGER, score INTEGER, UNIQUE(session_uuid, player_uuid, target))');
+    await db.execute('CREATE TABLE player (uuid STRING, name STRING)');
+    ["Ben", "Dave", "Doug", "Em", "Goughy", "Marina", "Sam"].forEach((element) async {
+      await db.execute("INSERT INTO player (uuid, name) VALUES (?, ?)", [Uuid().v4(), element]);
+    });
+  }
+
   static Future<DatabaseLayer> getInstance() async {
     if (DatabaseLayer._instance == null) {
       final database = await openDatabase(
-        join(await getDatabasesPath(), 'field_archery.db'),
+        await getDatabaseFilename(),
         onCreate: (db, version) async {
-          await db.execute('DROP TABLE session');
-          await db.execute('CREATE TABLE session(uuid STRING PRIMARY KEY, startTime INTEGER);');
-          // await db.execute("INSERT INTO session(uuid, startTime) VALUES ('5', 5)");
+          await seed(db);
         },
         onUpgrade: (db, oldVersion, newVersion) async {
-          await db.execute('DROP TABLE IF EXISTS session');
-          await db.execute('DROP TABLE IF EXISTS session_player');
-          await db.execute('DROP TABLE IF EXISTS  shot');
-          await db.execute('DROP TABLE IF EXISTS player');
-          await db.execute('CREATE TABLE session (uuid STRING PRIMARY KEY, start_time INTEGER, name STRING);');
-          await db.execute('CREATE TABLE session_player (session_uuid STRING, player_uuid STRING);');
-          await db.execute('CREATE TABLE shot (session_uuid STRING, player_uuid STRING, scored_time INTEGER, target INTEGER, score INTEGER);');
-          await db.execute('CREATE TABLE player (uuid STRING, name STRING)');
-          ["Ben", "Dave", "Doug", "Em", "Goughy", "Marina", "Sam"].forEach((element) async {
-            await db.execute("INSERT INTO player (uuid, name) VALUES (?, ?)", [Uuid().v4(), element]);
-          });
+          await seed(db);
         },
-        version: 7,
+        version: 9,
       );
 
       DatabaseLayer._instance = DatabaseLayer(database);
